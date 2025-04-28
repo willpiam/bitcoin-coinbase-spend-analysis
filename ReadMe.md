@@ -46,6 +46,29 @@ Please remember to make notes as you go along for your personal reference later.
 
 --------------------------------------------------
 
+---
+
+## ⚠️ **BIGQUERY COST WARNING – READ THIS BEFORE RUNNING THE COLLECTOR** ⚠️
+
+**If you run the collector script as-is, with a billing account attached, you can easily incur charges of thousands of dollars!**
+
+- The script queries the BigQuery `crypto_bitcoin.transactions` table by `block_number`, but this table is partitioned by `block_timestamp` (date), **not** by block number.
+- **Without filtering on the partition column (`block_timestamp` or `_PARTITIONTIME`), every query scans almost the entire table, even if you only want a small range of blocks.**
+- If you process the whole blockchain, the script will scan hundreds of terabytes, resulting in charges that can exceed $3,000 at current BigQuery pricing ($5 per TB scanned).
+- **This is not a bug in BigQuery, but a common pitfall when querying partitioned tables.**
+
+### How to avoid this:
+
+- **Add a filter on the partition column** (`block_timestamp` or `_PARTITIONTIME`) in your queries to limit the amount of data scanned.
+- **Monitor your usage and costs** in the GCP console while running the script.
+- **Set up budget alerts** in GCP to warn you before large charges accrue.
+- Consider creating your own table partitioned by `block_number` if you need to query by block height.
+
+**If you are unsure, do not run the script with a billing account attached until you understand the cost implications!**
+
+---
+
+
 ## Table schemas and data model
 
 Below is a concise overview of **where the data comes from** and **how it is stored locally**.  Knowing the column names ahead of time makes it easier to run your own ad-hoc queries against either BigQuery or the SQLite file that the collector produces.

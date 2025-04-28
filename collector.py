@@ -140,6 +140,12 @@ def ensure_schema(conn: sqlite3.Connection):
 # Main routine ------------------------------------------------------------
 
 def main():
+
+    print("Do not run this script... it will cost you a lot of money!")
+    exit(1)
+
+
+
     print("Starting Coinbase Spending Collector")
     client = bigquery.Client(project=BILLING_PROJECT)
 
