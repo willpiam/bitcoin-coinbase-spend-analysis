@@ -2,6 +2,9 @@
 
 Gather the data about when old coinbases were spent and proudce a graph. The goal is to gather data to analysis the hypothosys "the frequency of very old coinbase utxos being spent is getting higher. 
 
+![The main product a graph of early coinbase spends](coinbase_spends_early_years.png)
+
+
 ## The Data 
 
 For each block we will need

@@ -14,7 +14,7 @@ Options:
     --group PERIOD   Resample frequency. One of:
                      D = daily (default), M = monthly, Y = yearly
     --last-years Y   Only include spends in the past Y years relative to latest data (optional)
-    --out FILE       Output path for the saved plot (default: coinbase_spends_first_year.png)
+    --out FILE       Output path for the saved plot (default: coinbase_spends_early_years.png)
 
 The script always saves the output figure to the file specified by `--out`.
 """
@@ -79,7 +79,31 @@ WHERE creation_block_time IS NOT NULL
 # Plotting
 # ---------------------------------------------------------------------------
 
-def make_plots(df: pd.DataFrame, rule: ResampleRule, out_path: str, last_years: int | None = None) -> None:
+def generate_description(first_years: int, rule: ResampleRule, last_years: int | None = None) -> str:
+    """Generate a descriptive text explaining what the plot shows."""
+    period_map = {"D": "daily", "M": "monthly", "Y": "yearly"}
+    period = period_map[rule]
+    
+    description = (
+        f"This plot shows the spending patterns of Bitcoin coinbase outputs that were minted "
+        f"in the first {first_years} year{'s' if first_years > 1 else ''} of Bitcoin's existence "
+        f"(from January 2009 to January {2009 + first_years}). "
+    )
+    
+    if last_years is not None:
+        description += (
+            f"The data is filtered to only show spending activity from the past {last_years} "
+            f"year{'s' if last_years > 1 else ''}. "
+        )
+    
+    description += (
+        f"The top graph shows the {period} frequency of these early coinbase outputs being spent, "
+        f"while the bottom graph shows the cumulative total of spent outputs over time."
+    )
+    
+    return description
+
+def make_plots(df: pd.DataFrame, rule: ResampleRule, out_path: str, last_years: int | None = None, first_years: int = 1) -> None:
     """Generate and show the frequency + cumulative plots."""
     if df.empty:
         print("[yellow]No matching rows found. Has the collector processed any spends yet?[/yellow]")
@@ -104,10 +128,18 @@ def make_plots(df: pd.DataFrame, rule: ResampleRule, out_path: str, last_years: 
 
     cumulative = counts.cumsum()
 
+    # Create figure
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 8), sharex=True)
+    
+    # Generate title with key information
+    period_map = {"D": "daily", "M": "monthly", "Y": "yearly"}
+    period = period_map[rule]
+    title = f"Frequency of spending coinbases minted in Bitcoin's first {first_years} year{'s' if first_years > 1 else ''} ({period} view)"
+    if last_years is not None:
+        title += f" - Last {last_years} year{'s' if last_years > 1 else ''} only"
 
     counts.plot(ax=ax1, lw=1.5)
-    ax1.set_title("Frequency of spending coinbases minted in Bitcoin's first year")
+    ax1.set_title(title)
     ax1.set_ylabel("Outputs spent")
 
     cumulative.plot(ax=ax2, lw=1.5, color="tab:orange")
@@ -136,7 +168,7 @@ def parse_args() -> argparse.Namespace:
                         help="Time binning: D=daily, M=monthly, Y=yearly (default D)")
     parser.add_argument("--last-years", "-y", type=int, default=None,
                         help="Only include spends from the past N years relative to the latest data point (default: all)")
-    parser.add_argument("--out", "-o", default="coinbase_spends_first_year.png",
+    parser.add_argument("--out", "-o", default="coinbase_spends_early_years.png",
                         help="File path to save the plot")
     return parser.parse_args()
 
@@ -146,7 +178,7 @@ def main() -> None:
     # Load & filter for the first N years
     df = load_dataframe(args.db, args.first_years)
     # Plot and save
-    make_plots(df, args.group, args.out, args.last_years)
+    make_plots(df, args.group, args.out, args.last_years, args.first_years)
 
 
 if __name__ == "__main__":
