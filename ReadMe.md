@@ -4,6 +4,11 @@ Gather the data about when old coinbases were spent and proudce a graph. The goa
 
 ![The main product a graph of early coinbase spends](coinbase_spends_early_years.png)
 
+## My data set
+
+| hash (`b2sum -l 256 coinbase_spending.db`)| date  | link |
+| ------ | ----- | ---- |
+| 0f50561ecd8825d910d7087bbe36bd2d9ec1002b7b9f7508f3658ec9725f47d9 | April 27th 2025 | [Download](https://drive.google.com/file/d/1BGEcuytb6o8v3rUuAG5OEgpnvqPOj6km/view?usp=sharing) |
 
 ## The Data 
 
