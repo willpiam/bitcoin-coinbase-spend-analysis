@@ -1,0 +1,6 @@
+google-cloud-bigquery>=3.16.0
+pandas>=2.0.3
+python-dotenv>=1.0.1
+matplotlib>=3.8.0
+rich>=13.7.0
+tqdm>=4.66.2 

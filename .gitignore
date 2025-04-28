@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# SQLite database
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Environment files
+.env
+
+# Jupyter notebooks checkpoints
+.ipynb_checkpoints/
+
+# VSCode settings
+.vscode/
+
+# MacOS
+.DS_Store 
+
+bitcoinscanner-a1abc4ca9b01.json
+
+# Virtual environments
+venv/
+.venv/
+
+# Test artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Log files
+*.log
